@@ -1,0 +1,119 @@
+
+// ======================================
+// MOVIEINSIGHT - COMENTARIOS DEL CÓDIGO
+// ======================================
+
+//
+// ---------- GLOBAL.CS ----------
+//
+
+public struct RegistroGenero
+{
+    // Define la estructura base para un género de película
+    public int Codigo;            // Identificador único del género
+    public string Nombre;         // Nombre del género (ej: Acción)
+    public string Descripcion;    // Descripción del género
+}
+
+public static class Global
+{
+    // Almacena hasta 30 géneros cargados manual o automáticamente
+    public static RegistroGenero[] Generos = new RegistroGenero[30];
+    public static int IND = 0; // Contador de géneros cargados
+
+    // Meses para etiquetar las columnas de visualizaciones
+    public static string[] Meses = {
+        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    };
+
+    // Matriz: filas = géneros, columnas = meses (visualizaciones mensuales por género)
+    public static int[,] Visualizaciones = new int[30, 12];
+}
+
+//
+// ---------- FORM ACERCA DE ----------
+//
+
+private void FormAcercaDe_Load(object sender, EventArgs e)
+{
+    // Al cargar el formulario muestra los datos del alumno en un Label.
+    lblInfo.Text = "Alumno: Gonzalo Valentín Criado Sosa\n" +
+                   "DNI: 43998285\n" +
+                   "Carrera: Analista de Sistemas de Computación\n" +
+                   "Materia: Laboratorio de Programación I\n" +
+                   "Examen Final";
+}
+
+//
+// ---------- FORM CARGA AUTOMÁTICA DE DATOS ----------
+//
+
+private void btnCargarDatos_Click(object sender, EventArgs e)
+{
+    // Define 10 géneros preestablecidos con descripciones.
+    string[] nombres = { ... };
+    string[] descripciones = { ... };
+
+    // Genera visualizaciones aleatorias por género y por mes
+    Random rand = new Random();
+    for (int i = 0; i < 10; i++)
+    {
+        Global.Generos[i].Codigo = i + 1;
+        Global.Generos[i].Nombre = nombres[i];
+        Global.Generos[i].Descripcion = descripciones[i];
+
+        for (int j = 0; j < 12; j++)
+        {
+            // Genera número aleatorio entre 0 y 100 para cada mes
+            Global.Visualizaciones[i, j] = rand.Next(0, 101);
+        }
+    }
+    Global.IND = 10; // Se cargaron 10 géneros
+    MessageBox.Show("Datos cargados correctamente.");
+}
+
+//
+// ---------- FORM AGREGAR GÉNERO ----------
+//
+
+private void txtCodigo_TextChanged(object sender, EventArgs e) => ValidarCampos();
+private void txtNombre_TextChanged(object sender, EventArgs e) => ValidarCampos();
+private void txtDescripcion_TextChanged(object sender, EventArgs e) => ValidarCampos();
+
+private void ValidarCampos()
+{
+    // Activa el botón si todos los campos tienen texto
+    btnCargar.Enabled = txtCodigo.Text != "" && txtNombre.Text != "" && txtDescripcion.Text != "";
+}
+
+private void btnCargar_Click(object sender, EventArgs e)
+{
+    if (Global.IND < 30)
+    {
+        // Agrega un nuevo género a la estructura Global
+        Global.Generos[Global.IND].Codigo = int.Parse(txtCodigo.Text);
+        Global.Generos[Global.IND].Nombre = txtNombre.Text;
+        Global.Generos[Global.IND].Descripcion = txtDescripcion.Text;
+
+        Global.IND++; // Aumenta el índice
+
+        MessageBox.Show("Género agregado correctamente.");
+
+        // Limpia los campos del formulario
+        txtCodigo.Clear();
+        txtNombre.Clear();
+        txtDescripcion.Clear();
+        btnCargar.Enabled = false;
+    }
+    else
+    {
+        // Si ya hay 30 géneros cargados, no permite más
+        MessageBox.Show("Capacidad máxima de 30 géneros alcanzada.");
+    }
+}
+
+// Los formularios restantes de listado, consultas y estadísticas
+// siguen la misma lógica: leer desde Global.Generos y Global.Visualizaciones,
+// mostrar en DataGridViews y calcular totales, promedios, máximos y mínimos
+// según el caso.
